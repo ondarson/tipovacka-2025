@@ -360,8 +360,8 @@ function submitTip() {
   const name = document.getElementById('name').value.trim();
   const matchIndex = document.getElementById('match').value;
   const scoreInput = document.getElementById('score').value.trim();
-  const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => i.value.trim());
-  const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => i.value.trim());
+  const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => {const val = i.value.trim();return val === '' ? undefined : val;});
+  const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => {const val = i.value.trim();return val === '' ? undefined : val;});
 
   if (!name) {
     alert('Prosím vyplň jméno.');
