@@ -180,25 +180,27 @@
     </div>
   </div>
 
-  <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px; margin-bottom: 10px;">
-    <h2 style="margin: 0;">Seznam tipů</h2>
-    <div class="toggle-buttons">
-      <button onclick="showView('upcoming')" style="background-color: #21262d; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Nové tipy</button>
-      <button onclick="showView('past')" style="background-color: #21262d; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Historie</button>
-      <button onclick="showView('points')" style="background-color: #3b82f6; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Body</button>
-      <button onclick="showView('ranking')" style="background-color: #28d97f; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Pořadí</button>
-    </div>
-    </div>
+ <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px; margin-bottom: 10px;">
+  <h2 style="margin: 0;">Seznam tipů</h2>
+  <div class="toggle-buttons">
+    <button onclick="showView('upcoming')">Nové tipy</button>
+    <button onclick="showView('past')">Historie</button>
+    <button onclick="showView('points')">Body</button>
+    <button onclick="showView('ranking')">Pořadí</button>
+  </div>
 </div>
+
+<div id="tipsContainer"></div>
+
 <div id="rankingTable" style="display: none; margin-top: 10px; max-width: 400px;">
-  <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
+  <table class="tips-table">
     <thead>
       <tr><th>Pořadí</th><th>Jméno</th></tr>
     </thead>
     <tbody>
-      <tr><td style="font-size: 1.1rem;">🏆</td><td>Dan</td></tr>
-      <tr><td style="font-size: 1.1rem;">🥈</td><td>Honza</td></tr>
-      <tr><td style="font-size: 1.1rem;">🥉</td><td>Kuba</td></tr>
+      <tr><td>🏆</td><td>Dan</td></tr>
+      <tr><td>🥈</td><td>Honza</td></tr>
+      <tr><td>🥉</td><td>Kuba</td></tr>
       <tr><td>4.</td><td>Maris</td></tr>
       <tr><td>5.</td><td>Ondra</td></tr>
       <tr><td>6.</td><td>Patrik</td></tr>
@@ -207,24 +209,24 @@
     </tbody>
   </table>
 </div>
-<div id="tipsContainer"></div>
 
-  <div id="pointsTable" style="display: none; margin-top: 10px; max-width: 400px;">
-    <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
-      <thead>
-        <tr><th colspan="2">Bodování</th></tr>
-      </thead>
-      <tbody>
-        <tr style="color: #28d97f;"><td>+ 4 body</td><td>Přesný výsledek utkání</td></tr>
-        <tr style="color: #28d97f;"><td>+ 1 bod</td><td>Vítěz utkání</td></tr>
-        <tr style="color: #28d97f;"><td>+ 2 body</td><td>Gól útočníka</td></tr>
-        <tr style="color: #28d97f;"><td>+ 3 body</td><td>Gól obránce</td></tr>
-        <tr style="color: #ff6c6c;"><td>- 1 bod</td><td>Vyloučení 2 min</td></tr>
-        <tr style="color: #ff6c6c;"><td>- 2 body</td><td>Vyloučení 5 min</td></tr>
-        <tr style="color: #ff6c6c;"><td>- 3 body</td><td>Vyloučení 10 min</td></tr>
-      </tbody>
-    </table>
-  </div>
+<div id="pointsTable" style="display: none; margin-top: 10px; max-width: 400px;">
+  <table class="tips-table">
+    <thead>
+      <tr><th colspan="2">Bodování</th></tr>
+    </thead>
+    <tbody>
+      <tr style="color: #28d97f;"><td>+ 4 body</td><td>Přesný výsledek utkání</td></tr>
+      <tr style="color: #28d97f;"><td>+ 1 bod</td><td>Vítěz utkání</td></tr>
+      <tr style="color: #28d97f;"><td>+ 2 body</td><td>Gól útočníka</td></tr>
+      <tr style="color: #28d97f;"><td>+ 3 body</td><td>Gól obránce</td></tr>
+      <tr style="color: #ff6c6c;"><td>- 1 bod</td><td>Vyloučení 2 min</td></tr>
+      <tr style="color: #ff6c6c;"><td>- 2 body</td><td>Vyloučení 5 min</td></tr>
+      <tr style="color: #ff6c6c;"><td>- 3 body</td><td>Vyloučení 10 min</td></tr>
+    </tbody>
+  </table>
+</div>
+
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
