@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tipovačka - MS Hokej 2025</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500&family=Open+Sans&display=swap');
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #0d1117;
+      color: #f0f6fc;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-family: 'Rajdhani', sans-serif;
+      color: #58a6ff;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      background-color: #161b22;
+      color: #f0f6fc;
+      border: 1px solid #30363d;
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .tip-box {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    table.tips-table {
+      table-layout: fixed;
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 30px;
+      background-color: #161b22;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      width: 12.5%;
+      min-width: 100px;
+      font-weight: 600;
+      border: 1px solid #30363d;
+      padding: 8px;
+      text-align: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    th {
+      font-size: 1.15rem;
+      background-color: #21262d;
+      color: #58a6ff;
+    }
+
+    .match-section {
+      margin-bottom: 50px;
+    }
+
+    img.flag-icon {
+      vertical-align: middle;
+      width: 24px;
+      height: 18px;
+      margin-right: 5px;
+    }
+
+    .toggle-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .uniform-scorer {
+      width: 100px;
+      min-width: 100px;
+      max-width: 100px;
+    }
+
+    .scorer-cell {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+      height: 48px;
+      font-size: 0.95rem;
+      border: 1px solid #30363d;
+      text-align: center;
+      vertical-align: middle;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+        text-align: center;
+      }
+
+      .tip-box {
+        padding: 15px;
+      }
+
+      table, th, td {
+        font-size: 0.75rem;
+        padding: 6px;
+      }
+
+      .toggle-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toggle-buttons button {
+        width: 100%;
+      }
+
+      .scorer-cell, .uniform-scorer {
+        width: auto;
+        min-width: unset;
+        max-width: unset;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tipovačka - MS v hokeji 2025</h1>
+  <div class="tip-box">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <label for="name">Jméno:</label>
+      <input type="text" id="name">
+
+      <label for="match">Zápas:</label>
+      <select id="match"></select>
+
+      <label for="score">Tip na výsledek (např. 3:1):</label>
+      <input type="text" id="score" placeholder="např. 3:1">
+    </div>
+
+    <div style="display: flex; gap: 40px; margin-top: 15px; flex-wrap: wrap;">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 0px; min-width: 200px;">
+        <label>Střelci (domácí):</label>
+        <input type="text" class="scorer home" placeholder="Střelec 1">
+        <input type="text" class="scorer home" placeholder="Střelec 2">
+        <input type="text" class="scorer home" placeholder="Střelec 3">
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 0px; min-width: 200px;">
+        <label>Střelci (hosté):</label>
+        <input type="text" class="scorer away" placeholder="Střelec 1">
+        <input type="text" class="scorer away" placeholder="Střelec 2">
+        <input type="text" class="scorer away" placeholder="Střelec 3">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button onclick="submitTip()" style="background-color: #2363ff; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Odeslat tip</button>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px; margin-bottom: 10px;">
+    <h2 style="margin: 0;">Seznam tipů</h2>
+    <div class="toggle-buttons">
+      <button onclick="showView('upcoming')" style="background-color: #21262d; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Nové tipy</button>
+      <button onclick="showView('past')" style="background-color: #21262d; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Historie</button>
+      <button onclick="showView('points')" style="background-color: #3b82f6; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Body</button>
+      <button onclick="showView('ranking')" style="background-color: #28d97f; color: #f0f6fc; border: 1px solid #30363d; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Pořadí</button>
+    </div>
+    </div>
+</div>
+<div id="rankingTable" style="display: none; margin-top: 10px; max-width: 400px;">
+  <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
+    <thead>
+      <tr><th>Pořadí</th><th>Jméno</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="font-size: 1.1rem;">🏆</td><td>Dan</td></tr>
+      <tr><td style="font-size: 1.1rem;">🥈</td><td>Honza</td></tr>
+      <tr><td style="font-size: 1.1rem;">🥉</td><td>Kuba</td></tr>
+      <tr><td>4.</td><td>Maris</td></tr>
+      <tr><td>5.</td><td>Ondra</td></tr>
+      <tr><td>6.</td><td>Patrik</td></tr>
+      <tr><td>7.</td><td>Tom</td></tr>
+      <tr><td>8.</td><td>Váša</td></tr>
+    </tbody>
+  </table>
+</div>
+<div id="tipsContainer"></div>
+
+  <div id="pointsTable" style="display: none; margin-top: 10px; max-width: 400px;">
+    <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
+      <thead>
+        <tr><th colspan="2">Bodování</th></tr>
+      </thead>
+      <tbody>
+        <tr style="color: #28d97f;"><td>+ 4 body</td><td>Přesný výsledek utkání</td></tr>
+        <tr style="color: #28d97f;"><td>+ 1 bod</td><td>Vítěz utkání</td></tr>
+        <tr style="color: #28d97f;"><td>+ 2 body</td><td>Gól útočníka</td></tr>
+        <tr style="color: #28d97f;"><td>+ 3 body</td><td>Gól obránce</td></tr>
+        <tr style="color: #ff6c6c;"><td>- 1 bod</td><td>Vyloučení 2 min</td></tr>
+        <tr style="color: #ff6c6c;"><td>- 2 body</td><td>Vyloučení 5 min</td></tr>
+        <tr style="color: #ff6c6c;"><td>- 3 body</td><td>Vyloučení 10 min</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+const countryCodeMap = {
+  AUT: 'at', BEL: 'be', CAN: 'ca', CZE: 'cz', DEN: 'dk', FIN: 'fi', FRA: 'fr',
+  GER: 'de', HUN: 'hu', KAZ: 'kz', LAT: 'lv', NOR: 'no', SLO: 'si', SVK: 'sk',
+  SUI: 'ch', SWE: 'se', USA: 'us', GBR: 'gb'
+};
+
+const schedule = [
+  { date: '2025-05-08', time: '09:30', teams: ['SWE', 'FIN'], datetime: '2025-05-08T09:30:00+02:00' },
+  { date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
+  { date: '2025-05-09', time: '16:20', teams: ['SUI', 'CZE'], datetime: '2025-05-09T16:20:00+02:00' },
+  { date: '2025-05-09', time: '20:20', teams: ['SWE', 'SVK'], datetime: '2025-05-09T20:20:00+02:00' },
+  { date: '2025-05-09', time: '20:20', teams: ['DEN', 'USA'], datetime: '2025-05-09T20:20:00+02:00' },
+  { date: '2025-05-10', time: '12:20', teams: ['SLO', 'CAN'], datetime: '2025-05-10T12:20:00+02:00' }
+];
+
+function getFlagImg(code) {
+  const lowerCode = countryCodeMap[code];
+  return lowerCode ? `<img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'>` : code;
+}
+
+function populateMatches() {
+  const matchSelect = document.getElementById('match');
+  const now = new Date();
+  matchSelect.innerHTML = '';
+  schedule.forEach((match, i) => {
+    const matchTime = new Date(match.datetime);
+    if (now < matchTime) {
+      const option = document.createElement('option');
+      option.value = i;
+      option.innerHTML = `${getFlagImg(match.teams[0])} ${match.teams[0]} vs ${getFlagImg(match.teams[1])} ${match.teams[1]} (${match.date} ${match.time})`;
+      matchSelect.appendChild(option);
+    }
+  });
+}
+
+function submitTip() {
+  const name = document.getElementById('name').value.trim();
+  const matchIndex = document.getElementById('match').value;
+  const match = schedule[matchIndex];
+  const matchLabel = `${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time})`;
+  const matchTime = new Date(match.datetime);
+  const now = new Date();
+  if (now >= matchTime) {
+    alert('Tipování na tento zápas již není možné.');
+    return;
+  }
+  const scoreInput = document.getElementById('score').value.trim();
+  const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => i.value.trim());
+  const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => i.value.trim());
+  if (!name) {
+    alert('Prosím vyplň jméno.');
+    return;
+  }
+  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
+  
+  const existingIndex = tips.findIndex(t => t.name === name && t.match === matchLabel);
+  if (existingIndex !== -1) {
+    const existingTip = tips[existingIndex];
+    tips[existingIndex] = {
+    name,
+    match: matchLabel,
+    datetime: match.datetime,
+    score: scoreInput || existingTip.score || '',
+    homeScorers: updatePartialScorers(existingTip.homeScorers, homeScorersInput),
+    awayScorers: updatePartialScorers(existingTip.awayScorers, awayScorersInput)
+    };
+  } else {
+    tips.push({
+      name,
+      match: matchLabel,
+      datetime: match.datetime,
+      score: scoreInput,
+      homeScorers: homeScorersInput.join(', '),
+      awayScorers: awayScorersInput.join(', ')
+    });
+  }
+  localStorage.setItem('tips', JSON.stringify(tips));
+  renderTips('upcoming');
+}
+
+function mergeScorers(existing, incoming) {
+  const existingList = existing ? existing.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const merged = [...existingList];
+  incoming.forEach((s) => {
+    if (s && !merged.includes(s)) {
+      merged.push(s);
+    }
+  });
+  return merged.join(', ');
+}
+
+function renderTips(mode = 'upcoming') {
+  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
+  const now = new Date();
+  const tipsByMatch = {};
+  tips.forEach(tip => {
+    const matchTime = new Date(tip.datetime);
+    const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
+    const isPast = now >= archiveTime;
+    if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
+      if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
+      tipsByMatch[tip.match].push(tip);
+    }
+  });
+  const container = document.getElementById('tipsContainer');
+  container.innerHTML = '';
+  const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
+    const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
+    const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
+    return new Date(aMatch?.datetime) - new Date(bMatch?.datetime);
+  });
+  matchLabelsSorted.forEach(match => {
+    const section = document.createElement('div');
+    section.className = 'match-section';
+    const title = document.createElement('h3');
+    title.innerHTML = match.replace(/([A-Z]{3}) vs ([A-Z]{3})/, (full, t1, t2) => `${getFlagImg(t1)} ${t1} vs ${getFlagImg(t2)} ${t2}`);
+    section.appendChild(title);
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr>
+        <th rowspan="2">Jméno</th>
+        <th rowspan="2">Výsledek</th>
+        <th colspan="3">Střelci (domácí)</th>
+        <th colspan="3">Střelci (hosté)</th>
+      </tr>
+      <tr>
+        <th>1</th><th>2</th><th>3</th>
+        <th>1</th><th>2</th><th>3</th>
+      </tr>`;
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
+      const row = document.createElement('tr');
+      const homeScorers = (tip.homeScorers || '').split(',').map(s => s.trim());
+      const awayScorers = (tip.awayScorers || '').split(',').map(s => s.trim());
+      row.innerHTML = `
+        <td>${tip.name}</td>
+        <td>${tip.score || ''}</td>
+        <td>${homeScorers[0] || ''}</td>
+        <td>${homeScorers[1] || ''}</td>
+        <td>${homeScorers[2] || ''}</td>
+        <td>${awayScorers[0] || ''}</td>
+        <td>${awayScorers[1] || ''}</td>
+        <td>${awayScorers[2] || ''}</td>`;
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    section.appendChild(table);
+    container.appendChild(section);
+  });
+}
+
+function updatePartialScorers(existing, updates) {
+  const original = existing ? existing.split(',').map(s => s.trim()) : ['', '', ''];
+  const result = [...original];
+  updates.forEach((val, index) => {
+    if (val) result[index] = val;
+  });
+  return result.join(', ');
+}
+
+function showView(view) {
+  const tips = document.getElementById('tipsContainer');
+  const points = document.getElementById('pointsTable');
+  const ranking = document.getElementById('rankingTable');
+
+  tips.style.display = 'none';
+  points.style.display = 'none';
+  ranking.style.display = 'none';
+
+  if (view === 'points') {
+    points.style.display = 'block';
+  } else if (view === 'ranking') {
+    ranking.style.display = 'block';
+  } else {
+    tips.style.display = 'block';
+    renderTips(view);
+  }
+}
+
+window.onload = () => {
+  populateMatches();
+  renderTips('upcoming');
+};
+</script>
