@@ -253,10 +253,26 @@
   const db = firebase.firestore();
     
 const countryCodeMap = {
-  AUT: 'at', BEL: 'be', CAN: 'ca', CZE: 'cz', DEN: 'dk', FIN: 'fi', FRA: 'fr',
-  GER: 'de', HUN: 'hu', KAZ: 'kz', LAT: 'lv', NOR: 'no', SLO: 'si', SVK: 'sk',
-  SUI: 'ch', SWE: 'se', USA: 'us', GBR: 'gb'
+  AUT: 'at',
+  BEL: 'be',
+  CAN: 'ca',
+  CZE: 'cz',
+  DEN: 'dk',
+  FIN: 'fi',
+  FRA: 'fr',
+  GER: 'de',
+  HUN: 'hu',
+  KAZ: 'kz',
+  LAT: 'lv',
+  NOR: 'no',
+  SLO: 'si',
+  SVK: 'sk',
+  SUI: 'ch',
+  SWE: 'se',
+  USA: 'us',
+  GBR: 'gb'
 };
+
 
 const schedule = [
 { date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
@@ -320,8 +336,10 @@ const schedule = [
 
 function getFlagImg(code) {
   const lowerCode = countryCodeMap[code];
-  return lowerCode ? `<img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'>` : code;
+  if (!lowerCode) return code; // fallback pokud neexistuje
+  return `<img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'>`;
 }
+
 
 function populateMatches() {
   const matchSelect = document.getElementById('match');
