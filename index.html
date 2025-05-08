@@ -226,76 +226,36 @@
     </table>
   </div>
 
-  <script>
-const countryCodeMap = {
-  AUT: 'at', BEL: 'be', CAN: 'ca', CZE: 'cz', DEN: 'dk', FIN: 'fi', FRA: 'fr',
-  GER: 'de', HUN: 'hu', KAZ: 'kz', LAT: 'lv', NOR: 'no', SLO: 'si', SVK: 'sk',
-  SUI: 'ch', SWE: 'se', USA: 'us', GBR: 'gb'
-};
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOq8XW8MFuzPNiTCmyVETBdYwlfu6wqpE",
+    authDomain: "tipovacka-2025.firebaseapp.com",
+    projectId: "tipovacka-2025",
+    storageBucket: "tipovacka-2025.firebasestorage.app",
+    messagingSenderId: "500287071213",
+    appId: "1:500287071213:web:3c5970d8c6aba92030fde4",
+    measurementId: "G-BK4Q2E2K2H"
+  };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 
 const schedule = [
-{ date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
+  { date: '2025-05-08', time: '09:30', teams: ['SWE', 'FIN'], datetime: '2025-05-08T09:30:00+02:00' },
+  { date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
   { date: '2025-05-09', time: '16:20', teams: ['SUI', 'CZE'], datetime: '2025-05-09T16:20:00+02:00' },
   { date: '2025-05-09', time: '20:20', teams: ['SWE', 'SVK'], datetime: '2025-05-09T20:20:00+02:00' },
   { date: '2025-05-09', time: '20:20', teams: ['DEN', 'USA'], datetime: '2025-05-09T20:20:00+02:00' },
-  { date: '2025-05-10', time: '12:20', teams: ['SLO', 'CAN'], datetime: '2025-05-10T12:20:00+02:00' },
-  { date: '2025-05-10', time: '12:20', teams: ['NOR', 'KAZ'], datetime: '2025-05-10T12:20:00+02:00' },
-  { date: '2025-05-10', time: '16:20', teams: ['SWE', 'AUT'], datetime: '2025-05-10T16:20:00+02:00' },
-  { date: '2025-05-10', time: '16:20', teams: ['GER', 'HUN'], datetime: '2025-05-10T16:20:00+02:00' },
-  { date: '2025-05-10', time: '20:20', teams: ['FRA', 'LAT'], datetime: '2025-05-10T20:20:00+02:00' },
-  { date: '2025-05-10', time: '20:20', teams: ['DEN', 'SUI'], datetime: '2025-05-10T20:20:00+02:00' },
-  { date: '2025-05-11', time: '12:20', teams: ['SVK', 'SLO'], datetime: '2025-05-11T12:20:00+02:00' },
-  { date: '2025-05-11', time: '12:20', teams: ['USA', 'HUN'], datetime: '2025-05-11T12:20:00+02:00' },
-  { date: '2025-05-11', time: '16:20', teams: ['LAT', 'CAN'], datetime: '2025-05-11T16:20:00+02:00' },
-  { date: '2025-05-11', time: '16:20', teams: ['GER', 'KAZ'], datetime: '2025-05-11T16:20:00+02:00' },
-  { date: '2025-05-11', time: '20:20', teams: ['FIN', 'FRA'], datetime: '2025-05-11T20:20:00+02:00' },
-  { date: '2025-05-11', time: '20:20', teams: ['NOR', 'CZE'], datetime: '2025-05-11T20:20:00+02:00' },
-  { date: '2025-05-12', time: '16:20', teams: ['AUT', 'SVK'], datetime: '2025-05-12T16:20:00+02:00' },
-  { date: '2025-05-12', time: '16:20', teams: ['USA', 'SUI'], datetime: '2025-05-12T16:20:00+02:00' },
-  { date: '2025-05-12', time: '20:20', teams: ['FIN', 'SWE'], datetime: '2025-05-12T20:20:00+02:00' },
-  { date: '2025-05-12', time: '20:20', teams: ['CZE', 'DEN'], datetime: '2025-05-12T20:20:00+02:00' },
-  { date: '2025-05-13', time: '16:20', teams: ['SLO', 'LAT'], datetime: '2025-05-13T16:20:00+02:00' },
-  { date: '2025-05-13', time: '16:20', teams: ['NOR', 'GER'], datetime: '2025-05-13T16:20:00+02:00' },
-  { date: '2025-05-13', time: '20:20', teams: ['CAN', 'FRA'], datetime: '2025-05-13T20:20:00+02:00' },
-  { date: '2025-05-13', time: '20:20', teams: ['KAZ', 'HUN'], datetime: '2025-05-13T20:20:00+02:00' },
-  { date: '2025-05-13', time: '16:20', teams: ['SLO', 'LAT'], datetime: '2025-05-13T16:20:00+02:00' },
-  { date: '2025-05-13', time: '16:20', teams: ['NOR', 'GER'], datetime: '2025-05-13T16:20:00+02:00' },
-  { date: '2025-05-13', time: '20:20', teams: ['CAN', 'FRA'], datetime: '2025-05-13T20:20:00+02:00' },
-  { date: '2025-05-13', time: '20:20', teams: ['KAZ', 'HUN'], datetime: '2025-05-13T20:20:00+02:00' },
-  { date: '2025-05-15', time: '16:20', teams: ['FIN', 'SLO'], datetime: '2025-05-15T16:20:00+02:00' },
-  { date: '2025-05-15', time: '16:20', teams: ['SUI', 'GER'], datetime: '2025-05-15T16:20:00+02:00' },
-  { date: '2025-05-15', time: '20:20', teams: ['CAN', 'AUT'], datetime: '2025-05-15T20:20:00+02:00' },
-  { date: '2025-05-15', time: '20:20', teams: ['CZE', 'HUN'], datetime: '2025-05-15T20:20:00+02:00' },
-  { date: '2025-05-16', time: '16:20', teams: ['AUT', 'FRA'], datetime: '2025-05-16T16:20:00+02:00' },
-  { date: '2025-05-16', time: '16:20', teams: ['HUN', 'DEN'], datetime: '2025-05-16T16:20:00+02:00' },
-  { date: '2025-05-16', time: '20:20', teams: ['SWE', 'SLO'], datetime: '2025-05-16T20:20:00+02:00' },
-  { date: '2025-05-16', time: '20:20', teams: ['SUI', 'NOR'], datetime: '2025-05-16T20:20:00+02:00' },
-  { date: '2025-05-17', time: '12:20', teams: ['FIN', 'LAT'], datetime: '2025-05-17T12:20:00+02:00' },
-  { date: '2025-05-17', time: '12:20', teams: ['USA', 'GER'], datetime: '2025-05-17T12:20:00+02:00' },
-  { date: '2025-05-17', time: '16:20', teams: ['FRA', 'SWE'], datetime: '2025-05-17T16:20:00+02:00' },
-  { date: '2025-05-17', time: '16:20', teams: ['CZE', 'KAZ'], datetime: '2025-05-17T16:20:00+02:00' },
-  { date: '2025-05-17', time: '20:20', teams: ['CAN', 'SVK'], datetime: '2025-05-17T20:20:00+02:00' },
-  { date: '2025-05-17', time: '20:20', teams: ['DEN', 'NOR'], datetime: '2025-05-17T20:20:00+02:00' },
-  { date: '2025-05-18', time: '16:20', teams: ['SLO', 'AUT'], datetime: '2025-05-18T16:20:00+02:00' },
-  { date: '2025-05-18', time: '16:20', teams: ['KAZ', 'USA'], datetime: '2025-05-18T16:20:00+02:00' },
-  { date: '2025-05-18', time: '20:20', teams: ['SVK', 'LAT'], datetime: '2025-05-18T20:20:00+02:00' },
-  { date: '2025-05-18', time: '20:20', teams: ['HUN', 'SUI'], datetime: '2025-05-18T20:20:00+02:00' },
-  { date: '2025-05-19', time: '16:20', teams: ['FRA', 'SLO'], datetime: '2025-05-19T16:20:00+02:00' },
-  { date: '2025-05-19', time: '16:20', teams: ['GER', 'CZE'], datetime: '2025-05-19T16:20:00+02:00' },
-  { date: '2025-05-19', time: '20:20', teams: ['CAN', 'FIN'], datetime: '2025-05-19T20:20:00+02:00' },
-  { date: '2025-05-19', time: '20:20', teams: ['HUN', 'NOR'], datetime: '2025-05-19T20:20:00+02:00' },
-  { date: '2025-05-20', time: '12:20', teams: ['LAT', 'AUT'], datetime: '2025-05-20T12:20:00+02:00' },
-  { date: '2025-05-20', time: '12:20', teams: ['SUI', 'KAZ'], datetime: '2025-05-20T12:20:00+02:00' },
-  { date: '2025-05-20', time: '16:20', teams: ['SVK', 'FIN'], datetime: '2025-05-20T16:20:00+02:00' },
-  { date: '2025-05-20', time: '16:20', teams: ['CZE', 'USA'], datetime: '2025-05-20T16:20:00+02:00' },
-  { date: '2025-05-20', time: '20:20', teams: ['SWE', 'CAN'], datetime: '2025-05-20T20:20:00+02:00' },
-  { date: '2025-05-20', time: '20:20', teams: ['GER', 'DEN'], datetime: '2025-05-20T20:20:00+02:00' }
-
+  { date: '2025-05-10', time: '12:20', teams: ['SLO', 'CAN'], datetime: '2025-05-10T12:20:00+02:00' }
 ];
 
 function getFlagImg(code) {
   const lowerCode = countryCodeMap[code];
-  return lowerCode ? `<img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'>` : code;
+  return lowerCode ? <img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'> : code;
 }
 
 function populateMatches() {
@@ -307,56 +267,52 @@ function populateMatches() {
     if (now < matchTime) {
       const option = document.createElement('option');
       option.value = i;
-      option.innerHTML = `${getFlagImg(match.teams[0])} ${match.teams[0]} vs ${getFlagImg(match.teams[1])} ${match.teams[1]} (${match.date} ${match.time})`;
+      option.innerHTML = ${getFlagImg(match.teams[0])} ${match.teams[0]} vs ${getFlagImg(match.teams[1])} ${match.teams[1]} (${match.date} ${match.time});
       matchSelect.appendChild(option);
     }
   });
 }
 
-function submitTip() {
-  const name = document.getElementById('name').value.trim();
-  const matchIndex = document.getElementById('match').value;
-  const match = schedule[matchIndex];
-  const matchLabel = `${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time})`;
-  const matchTime = new Date(match.datetime);
-  const now = new Date();
-  if (now >= matchTime) {
-    alert('Tipování na tento zápas již není možné.');
-    return;
-  }
-  const scoreInput = document.getElementById('score').value.trim();
-  const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => i.value.trim());
-  const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => i.value.trim());
-  if (!name) {
-    alert('Prosím vyplň jméno.');
-    return;
-  }
-  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
-  
-  const existingIndex = tips.findIndex(t => t.name === name && t.match === matchLabel);
-  if (existingIndex !== -1) {
-    const existingTip = tips[existingIndex];
-    tips[existingIndex] = {
-    name,
-    match: matchLabel,
-    datetime: match.datetime,
-    score: scoreInput || existingTip.score || '',
-    homeScorers: updatePartialScorers(existingTip.homeScorers, homeScorersInput),
-    awayScorers: updatePartialScorers(existingTip.awayScorers, awayScorersInput)
-    };
-  } else {
-    tips.push({
+ window.submitTip = async function() {
+    const name = document.getElementById('name').value.trim();
+    const matchIndex = document.getElementById('match').value;
+    const match = schedule[matchIndex];
+    const matchLabel = ${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time});
+    const matchTime = new Date(match.datetime);
+    const now = new Date();
+
+    if (now >= matchTime) {
+      alert('Tipování na tento zápas již není možné.');
+      return;
+    }
+
+    const scoreInput = document.getElementById('score').value.trim();
+    const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => i.value.trim()).filter(Boolean);
+    const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => i.value.trim()).filter(Boolean);
+
+    if (!name) {
+      alert('Prosím vyplň jméno.');
+      return;
+    }
+
+    const tipData = {
       name,
       match: matchLabel,
       datetime: match.datetime,
       score: scoreInput,
-      homeScorers: homeScorersInput.join(', '),
-      awayScorers: awayScorersInput.join(', ')
-    });
-  }
-  localStorage.setItem('tips', JSON.stringify(tips));
-  renderTips('upcoming');
-}
+      homeScorers: homeScorersInput,
+      awayScorers: awayScorersInput
+    };
+
+    try {
+      await setDoc(doc(db, 'tips', ${name}_${matchLabel}), tipData, { merge: true });
+      alert('Tip úspěšně uložen!');
+      renderTips('upcoming');
+    } catch (error) {
+      console.error('Chyba při ukládání tipu:', error);
+      alert('Nastala chyba při ukládání tipu.');
+    }
+  };
 
 function mergeScorers(existing, incoming) {
   const existingList = existing ? existing.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -369,67 +325,79 @@ function mergeScorers(existing, incoming) {
   return merged.join(', ');
 }
 
-function renderTips(mode = 'upcoming') {
-  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
-  const now = new Date();
-  const tipsByMatch = {};
-  tips.forEach(tip => {
-    const matchTime = new Date(tip.datetime);
-    const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
-    const isPast = now >= archiveTime;
-    if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
-      if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
-      tipsByMatch[tip.match].push(tip);
+ window.renderTips = async function(mode = 'upcoming') {
+    const now = new Date();
+    const container = document.getElementById('tipsContainer');
+    container.innerHTML = '';
+
+    try {
+      const querySnapshot = await getDocs(collection(db, 'tips'));
+      const tips = querySnapshot.docs.map(doc => doc.data());
+
+      const tipsByMatch = {};
+      tips.forEach(tip => {
+        const matchTime = new Date(tip.datetime);
+        const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
+        const isPast = now >= archiveTime;
+
+        if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
+          if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
+          tipsByMatch[tip.match].push(tip);
+        }
+      });
+
+      const sortedMatches = Object.keys(tipsByMatch).sort((a, b) => {
+        const aMatch = schedule.find(m => ${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time}) === a);
+        const bMatch = schedule.find(m => ${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time}) === b);
+        return new Date(aMatch.datetime) - new Date(bMatch.datetime);
+      });
+
+      sortedMatches.forEach(match => {
+        const section = document.createElement('div');
+        section.className = 'match-section';
+        const title = document.createElement('h3');
+        title.textContent = match;
+        section.appendChild(title);
+
+        const table = document.createElement('table');
+        table.innerHTML = <thead>
+          <tr>
+            <th rowspan="2">Jméno</th>
+            <th rowspan="2">Výsledek</th>
+            <th colspan="3">Střelci (domácí)</th>
+            <th colspan="3">Střelci (hosté)</th>
+          </tr>
+          <tr>
+            <th>1</th><th>2</th><th>3</th>
+            <th>1</th><th>2</th><th>3</th>
+          </tr>
+        </thead>;
+
+        const tbody = document.createElement('tbody');
+
+        tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
+          const row = document.createElement('tr');
+          row.innerHTML = 
+            <td>${tip.name}</td>
+            <td>${tip.score}</td>
+            <td>${tip.homeScorers[0] || ''}</td>
+            <td>${tip.homeScorers[1] || ''}</td>
+            <td>${tip.homeScorers[2] || ''}</td>
+            <td>${tip.awayScorers[0] || ''}</td>
+            <td>${tip.awayScorers[1] || ''}</td>
+            <td>${tip.awayScorers[2] || ''}</td>
+          ;
+          tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        section.appendChild(table);
+        container.appendChild(section);
+      });
+    } catch (error) {
+      console.error('Chyba načtení tipů:', error);
     }
-  });
-  const container = document.getElementById('tipsContainer');
-  container.innerHTML = '';
-  const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
-    const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
-    const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
-    return new Date(aMatch?.datetime) - new Date(bMatch?.datetime);
-  });
-  matchLabelsSorted.forEach(match => {
-    const section = document.createElement('div');
-    section.className = 'match-section';
-    const title = document.createElement('h3');
-    title.innerHTML = match.replace(/([A-Z]{3}) vs ([A-Z]{3})/, (full, t1, t2) => `${getFlagImg(t1)} ${t1} vs ${getFlagImg(t2)} ${t2}`);
-    section.appendChild(title);
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-      <tr>
-        <th rowspan="2">Jméno</th>
-        <th rowspan="2">Výsledek</th>
-        <th colspan="3">Střelci (domácí)</th>
-        <th colspan="3">Střelci (hosté)</th>
-      </tr>
-      <tr>
-        <th>1</th><th>2</th><th>3</th>
-        <th>1</th><th>2</th><th>3</th>
-      </tr>`;
-    table.appendChild(thead);
-    const tbody = document.createElement('tbody');
-    tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
-      const row = document.createElement('tr');
-      const homeScorers = (tip.homeScorers || '').split(',').map(s => s.trim());
-      const awayScorers = (tip.awayScorers || '').split(',').map(s => s.trim());
-      row.innerHTML = `
-        <td>${tip.name}</td>
-        <td>${tip.score || ''}</td>
-        <td>${homeScorers[0] || ''}</td>
-        <td>${homeScorers[1] || ''}</td>
-        <td>${homeScorers[2] || ''}</td>
-        <td>${awayScorers[0] || ''}</td>
-        <td>${awayScorers[1] || ''}</td>
-        <td>${awayScorers[2] || ''}</td>`;
-      tbody.appendChild(row);
-    });
-    table.appendChild(tbody);
-    section.appendChild(table);
-    container.appendChild(section);
-  });
-}
+  };
 
 function updatePartialScorers(existing, updates) {
   const original = existing ? existing.split(',').map(s => s.trim()) : ['', '', ''];
