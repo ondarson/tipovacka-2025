@@ -378,27 +378,30 @@ function submitTip() {
     return;
   }
 
-  const tipId = `${name}_${matchLabel}`.replace(/\s+/g, '_').replace(/[():]/g, ''); // bezpečný ID
+  const tipId = `${name}_${matchLabel}`.replace(/\s+/g, '_').replace(/[():]/g, '');
 
-  const tipData = {
-    name,
-    match: matchLabel,
-    datetime: match.datetime,
-    score: scoreInput,
-    homeScorers: homeScorersInput.join(', '),
-    awayScorers: awayScorersInput.join(', ')
-  };
+  const tipRef = db.collection("tips").doc(tipId);
 
-  // Zápis do Firestore (přepis při opakovaném zadání)
-  db.collection("tips").doc(tipId).set(tipData)
-    .then(() => {
-      alert("Tip byl úspěšně uložen do Firestore!");
-      renderTips('upcoming');
-    })
-    .catch((error) => {
-      console.error("Chyba při ukládání tipu:", error);
-      alert("Nepodařilo se uložit tip. Zkontroluj připojení a zkus to znovu.");
-    });
+  tipRef.get().then((doc) => {
+    const existing = doc.exists ? doc.data() : {};
+
+    const updatedTip = {
+      name,
+      match: matchLabel,
+      datetime: match.datetime,
+      score: scoreInput || existing.score || '',
+      homeScorers: updatePartialScorers(existing.homeScorers, homeScorersInput),
+      awayScorers: updatePartialScorers(existing.awayScorers, awayScorersInput)
+    };
+
+    return tipRef.set(updatedTip);
+  }).then(() => {
+    alert("Tip byl úspěšně uložen do Firestore!");
+    renderTips('upcoming');
+  }).catch((error) => {
+    console.error("Chyba při ukládání tipu:", error);
+    alert("Nepodařilo se uložit tip. Zkontroluj připojení a zkus to znovu.");
+  });
 }
 
 
