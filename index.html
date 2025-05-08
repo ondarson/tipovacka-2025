@@ -240,44 +240,49 @@
     measurementId: "G-BK4Q2E2K2H"
   };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
+  const countryCodeMap = {
+    CZE: "cz", SVK: "sk", FIN: "fi", SWE: "se", CAN: "ca", USA: "us",
+    SUI: "ch", GER: "de", DEN: "dk", LAT: "lv", NOR: "no", AUT: "at",
+    FRA: "fr", KAZ: "kz", GBR: "gb", SLO: "si"
+  };
 
-const schedule = [
-  { date: '2025-05-08', time: '09:30', teams: ['SWE', 'FIN'], datetime: '2025-05-08T09:30:00+02:00' },
-  { date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
-  { date: '2025-05-09', time: '16:20', teams: ['SUI', 'CZE'], datetime: '2025-05-09T16:20:00+02:00' },
-  { date: '2025-05-09', time: '20:20', teams: ['SWE', 'SVK'], datetime: '2025-05-09T20:20:00+02:00' },
-  { date: '2025-05-09', time: '20:20', teams: ['DEN', 'USA'], datetime: '2025-05-09T20:20:00+02:00' },
-  { date: '2025-05-10', time: '12:20', teams: ['SLO', 'CAN'], datetime: '2025-05-10T12:20:00+02:00' }
-];
+  const schedule = [
+    { date: '2025-05-08', time: '09:30', teams: ['SWE', 'FIN'], datetime: '2025-05-08T09:30:00+02:00' },
+    { date: '2025-05-09', time: '16:20', teams: ['AUT', 'FIN'], datetime: '2025-05-09T16:20:00+02:00' },
+    { date: '2025-05-09', time: '16:20', teams: ['SUI', 'CZE'], datetime: '2025-05-09T16:20:00+02:00' },
+    { date: '2025-05-09', time: '20:20', teams: ['SWE', 'SVK'], datetime: '2025-05-09T20:20:00+02:00' },
+    { date: '2025-05-09', time: '20:20', teams: ['DEN', 'USA'], datetime: '2025-05-09T20:20:00+02:00' },
+    { date: '2025-05-10', time: '12:20', teams: ['SLO', 'CAN'], datetime: '2025-05-10T12:20:00+02:00' }
+  ];
 
-function getFlagImg(code) {
-  const lowerCode = countryCodeMap[code];
-  return lowerCode ? <img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'> : code;
-}
+  function getFlagImg(code) {
+    const lowerCode = countryCodeMap[code];
+    return lowerCode ? `<img class='flag-icon' src='https://flagcdn.com/24x18/${lowerCode}.png' alt='${code}'>` : code;
+  }
 
-function populateMatches() {
-  const matchSelect = document.getElementById('match');
-  const now = new Date();
-  matchSelect.innerHTML = '';
-  schedule.forEach((match, i) => {
-    const matchTime = new Date(match.datetime);
-    if (now < matchTime) {
-      const option = document.createElement('option');
-      option.value = i;
-      option.innerHTML = ${getFlagImg(match.teams[0])} ${match.teams[0]} vs ${getFlagImg(match.teams[1])} ${match.teams[1]} (${match.date} ${match.time});
-      matchSelect.appendChild(option);
-    }
-  });
-}
+  function populateMatches() {
+    const matchSelect = document.getElementById('match');
+    const now = new Date();
+    matchSelect.innerHTML = '';
+    schedule.forEach((match, i) => {
+      const matchTime = new Date(match.datetime);
+      if (now < matchTime) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.innerHTML = `${getFlagImg(match.teams[0])} ${match.teams[0]} vs ${getFlagImg(match.teams[1])} ${match.teams[1]} (${match.date} ${match.time})`;
+        matchSelect.appendChild(option);
+      }
+    });
+  }
 
- window.submitTip = async function() {
+  window.submitTip = async function() {
     const name = document.getElementById('name').value.trim();
     const matchIndex = document.getElementById('match').value;
     const match = schedule[matchIndex];
-    const matchLabel = ${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time});
+    const matchLabel = `${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time})`;
     const matchTime = new Date(match.datetime);
     const now = new Date();
 
@@ -305,7 +310,7 @@ function populateMatches() {
     };
 
     try {
-      await setDoc(doc(db, 'tips', ${name}_${matchLabel}), tipData, { merge: true });
+      await setDoc(doc(db, 'tips', `${name}_${matchLabel}`), tipData, { merge: true });
       alert('Tip úspěšně uložen!');
       renderTips('upcoming');
     } catch (error) {
@@ -314,18 +319,7 @@ function populateMatches() {
     }
   };
 
-function mergeScorers(existing, incoming) {
-  const existingList = existing ? existing.split(',').map(s => s.trim()).filter(Boolean) : [];
-  const merged = [...existingList];
-  incoming.forEach((s) => {
-    if (s && !merged.includes(s)) {
-      merged.push(s);
-    }
-  });
-  return merged.join(', ');
-}
-
- window.renderTips = async function(mode = 'upcoming') {
+  window.renderTips = async function(mode = 'upcoming') {
     const now = new Date();
     const container = document.getElementById('tipsContainer');
     container.innerHTML = '';
@@ -347,9 +341,9 @@ function mergeScorers(existing, incoming) {
       });
 
       const sortedMatches = Object.keys(tipsByMatch).sort((a, b) => {
-        const aMatch = schedule.find(m => ${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time}) === a);
-        const bMatch = schedule.find(m => ${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time}) === b);
-        return new Date(aMatch.datetime) - new Date(bMatch.datetime);
+        const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
+        const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
+        return new Date(aMatch?.datetime || 0) - new Date(bMatch?.datetime || 0);
       });
 
       sortedMatches.forEach(match => {
@@ -360,24 +354,27 @@ function mergeScorers(existing, incoming) {
         section.appendChild(title);
 
         const table = document.createElement('table');
-        table.innerHTML = <thead>
-          <tr>
-            <th rowspan="2">Jméno</th>
-            <th rowspan="2">Výsledek</th>
-            <th colspan="3">Střelci (domácí)</th>
-            <th colspan="3">Střelci (hosté)</th>
-          </tr>
-          <tr>
-            <th>1</th><th>2</th><th>3</th>
-            <th>1</th><th>2</th><th>3</th>
-          </tr>
-        </thead>;
+        table.className = 'tips-table';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th rowspan="2">Jméno</th>
+              <th rowspan="2">Výsledek</th>
+              <th colspan="3">Střelci (domácí)</th>
+              <th colspan="3">Střelci (hosté)</th>
+            </tr>
+            <tr>
+              <th>1</th><th>2</th><th>3</th>
+              <th>1</th><th>2</th><th>3</th>
+            </tr>
+          </thead>
+        `;
 
         const tbody = document.createElement('tbody');
 
         tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
           const row = document.createElement('tr');
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${tip.name}</td>
             <td>${tip.score}</td>
             <td>${tip.homeScorers[0] || ''}</td>
@@ -386,7 +383,7 @@ function mergeScorers(existing, incoming) {
             <td>${tip.awayScorers[0] || ''}</td>
             <td>${tip.awayScorers[1] || ''}</td>
             <td>${tip.awayScorers[2] || ''}</td>
-          ;
+          `;
           tbody.appendChild(row);
         });
 
@@ -399,36 +396,27 @@ function mergeScorers(existing, incoming) {
     }
   };
 
-function updatePartialScorers(existing, updates) {
-  const original = existing ? existing.split(',').map(s => s.trim()) : ['', '', ''];
-  const result = [...original];
-  updates.forEach((val, index) => {
-    if (val) result[index] = val;
-  });
-  return result.join(', ');
-}
+  function showView(view) {
+    const tips = document.getElementById('tipsContainer');
+    const points = document.getElementById('pointsTable');
+    const ranking = document.getElementById('rankingTable');
 
-function showView(view) {
-  const tips = document.getElementById('tipsContainer');
-  const points = document.getElementById('pointsTable');
-  const ranking = document.getElementById('rankingTable');
+    tips.style.display = 'none';
+    points.style.display = 'none';
+    ranking.style.display = 'none';
 
-  tips.style.display = 'none';
-  points.style.display = 'none';
-  ranking.style.display = 'none';
-
-  if (view === 'points') {
-    points.style.display = 'block';
-  } else if (view === 'ranking') {
-    ranking.style.display = 'block';
-  } else {
-    tips.style.display = 'block';
-    renderTips(view);
+    if (view === 'points') {
+      points.style.display = 'block';
+    } else if (view === 'ranking') {
+      ranking.style.display = 'block';
+    } else {
+      tips.style.display = 'block';
+      renderTips(view);
+    }
   }
-}
 
-window.onload = () => {
-  populateMatches();
-  renderTips('upcoming');
-};
+  window.onload = () => {
+    populateMatches();
+    renderTips('upcoming');
+  };
 </script>
