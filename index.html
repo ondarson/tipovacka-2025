@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
+  <!-- Firebase App (nutné vždy) -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+
+<!-- Volitelné knihovny: Firestore a Analytics -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics-compat.js"></script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tipovačka - MS Hokej 2025</title>
@@ -227,6 +234,24 @@
   </div>
 
   <script>
+
+  // Firebase konfigurace
+  const firebaseConfig = {
+    apiKey: "AIzaSyAOq8XW8MFuzPNiTCmyVETBdYwlfu6wqpE",
+    authDomain: "tipovacka-2025.firebaseapp.com",
+    projectId: "tipovacka-2025",
+    storageBucket: "tipovacka-2025.firebasestorage.app",
+    messagingSenderId: "500287071213",
+    appId: "1:500287071213:web:3c5970d8c6aba92030fde4",
+    measurementId: "G-BK4Q2E2K2H"
+  };
+
+  // Inicializace Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  const db = firebase.firestore();
+    
 const countryCodeMap = {
   AUT: 'at', BEL: 'be', CAN: 'ca', CZE: 'cz', DEN: 'dk', FIN: 'fi', FRA: 'fr',
   GER: 'de', HUN: 'hu', KAZ: 'kz', LAT: 'lv', NOR: 'no', SLO: 'si', SVK: 'sk',
@@ -316,47 +341,48 @@ function populateMatches() {
 function submitTip() {
   const name = document.getElementById('name').value.trim();
   const matchIndex = document.getElementById('match').value;
-  const match = schedule[matchIndex];
-  const matchLabel = `${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time})`;
-  const matchTime = new Date(match.datetime);
-  const now = new Date();
-  if (now >= matchTime) {
-    alert('Tipování na tento zápas již není možné.');
-    return;
-  }
   const scoreInput = document.getElementById('score').value.trim();
   const homeScorersInput = Array.from(document.querySelectorAll('.scorer.home')).map(i => i.value.trim());
   const awayScorersInput = Array.from(document.querySelectorAll('.scorer.away')).map(i => i.value.trim());
+
   if (!name) {
     alert('Prosím vyplň jméno.');
     return;
   }
-  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
-  
-  const existingIndex = tips.findIndex(t => t.name === name && t.match === matchLabel);
-  if (existingIndex !== -1) {
-    const existingTip = tips[existingIndex];
-    tips[existingIndex] = {
+
+  const match = schedule[matchIndex];
+  const matchLabel = `${match.teams[0]} vs ${match.teams[1]} (${match.date} ${match.time})`;
+  const matchTime = new Date(match.datetime);
+  const now = new Date();
+
+  if (now >= matchTime) {
+    alert('Tipování na tento zápas již není možné.');
+    return;
+  }
+
+  const tipId = `${name}_${matchLabel}`.replace(/\s+/g, '_').replace(/[():]/g, ''); // bezpečný ID
+
+  const tipData = {
     name,
     match: matchLabel,
     datetime: match.datetime,
-    score: scoreInput || existingTip.score || '',
-    homeScorers: updatePartialScorers(existingTip.homeScorers, homeScorersInput),
-    awayScorers: updatePartialScorers(existingTip.awayScorers, awayScorersInput)
-    };
-  } else {
-    tips.push({
-      name,
-      match: matchLabel,
-      datetime: match.datetime,
-      score: scoreInput,
-      homeScorers: homeScorersInput.join(', '),
-      awayScorers: awayScorersInput.join(', ')
+    score: scoreInput,
+    homeScorers: homeScorersInput.join(', '),
+    awayScorers: awayScorersInput.join(', ')
+  };
+
+  // Zápis do Firestore (přepis při opakovaném zadání)
+  db.collection("tips").doc(tipId).set(tipData)
+    .then(() => {
+      alert("Tip byl úspěšně uložen do Firestore!");
+      renderTips('upcoming');
+    })
+    .catch((error) => {
+      console.error("Chyba při ukládání tipu:", error);
+      alert("Nepodařilo se uložit tip. Zkontroluj připojení a zkus to znovu.");
     });
-  }
-  localStorage.setItem('tips', JSON.stringify(tips));
-  renderTips('upcoming');
 }
+
 
 function mergeScorers(existing, incoming) {
   const existingList = existing ? existing.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -370,66 +396,79 @@ function mergeScorers(existing, incoming) {
 }
 
 function renderTips(mode = 'upcoming') {
-  const tips = JSON.parse(localStorage.getItem('tips') || '[]');
   const now = new Date();
-  const tipsByMatch = {};
-  tips.forEach(tip => {
-    const matchTime = new Date(tip.datetime);
-    const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
-    const isPast = now >= archiveTime;
-    if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
-      if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
-      tipsByMatch[tip.match].push(tip);
-    }
-  });
   const container = document.getElementById('tipsContainer');
   container.innerHTML = '';
-  const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
-    const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
-    const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
-    return new Date(aMatch?.datetime) - new Date(bMatch?.datetime);
-  });
-  matchLabelsSorted.forEach(match => {
-    const section = document.createElement('div');
-    section.className = 'match-section';
-    const title = document.createElement('h3');
-    title.innerHTML = match.replace(/([A-Z]{3}) vs ([A-Z]{3})/, (full, t1, t2) => `${getFlagImg(t1)} ${t1} vs ${getFlagImg(t2)} ${t2}`);
-    section.appendChild(title);
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-      <tr>
-        <th rowspan="2">Jméno</th>
-        <th rowspan="2">Výsledek</th>
-        <th colspan="3">Střelci (domácí)</th>
-        <th colspan="3">Střelci (hosté)</th>
-      </tr>
-      <tr>
-        <th>1</th><th>2</th><th>3</th>
-        <th>1</th><th>2</th><th>3</th>
-      </tr>`;
-    table.appendChild(thead);
-    const tbody = document.createElement('tbody');
-    tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
-      const row = document.createElement('tr');
-      const homeScorers = (tip.homeScorers || '').split(',').map(s => s.trim());
-      const awayScorers = (tip.awayScorers || '').split(',').map(s => s.trim());
-      row.innerHTML = `
-        <td>${tip.name}</td>
-        <td>${tip.score || ''}</td>
-        <td>${homeScorers[0] || ''}</td>
-        <td>${homeScorers[1] || ''}</td>
-        <td>${homeScorers[2] || ''}</td>
-        <td>${awayScorers[0] || ''}</td>
-        <td>${awayScorers[1] || ''}</td>
-        <td>${awayScorers[2] || ''}</td>`;
-      tbody.appendChild(row);
+
+  db.collection("tips").get().then(snapshot => {
+    const tips = snapshot.docs.map(doc => doc.data());
+    const tipsByMatch = {};
+
+    tips.forEach(tip => {
+      const matchTime = new Date(tip.datetime);
+      const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
+      const isPast = now >= archiveTime;
+
+      if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
+        if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
+        tipsByMatch[tip.match].push(tip);
+      }
     });
-    table.appendChild(tbody);
-    section.appendChild(table);
-    container.appendChild(section);
+
+    const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
+      const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
+      const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
+      return new Date(aMatch?.datetime) - new Date(bMatch?.datetime);
+    });
+
+    matchLabelsSorted.forEach(match => {
+      const section = document.createElement('div');
+      section.className = 'match-section';
+      const title = document.createElement('h3');
+      title.innerHTML = match.replace(/([A-Z]{3}) vs ([A-Z]{3})/, (full, t1, t2) => `${getFlagImg(t1)} ${t1} vs ${getFlagImg(t2)} ${t2}`);
+      section.appendChild(title);
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th rowspan="2">Jméno</th>
+          <th rowspan="2">Výsledek</th>
+          <th colspan="3">Střelci (domácí)</th>
+          <th colspan="3">Střelci (hosté)</th>
+        </tr>
+        <tr>
+          <th>1</th><th>2</th><th>3</th>
+          <th>1</th><th>2</th><th>3</th>
+        </tr>`;
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      tipsByMatch[match].sort((a, b) => a.name.localeCompare(b.name)).forEach(tip => {
+        const row = document.createElement('tr');
+        const homeScorers = (tip.homeScorers || '').split(',').map(s => s.trim());
+        const awayScorers = (tip.awayScorers || '').split(',').map(s => s.trim());
+        row.innerHTML = `
+          <td>${tip.name}</td>
+          <td>${tip.score || ''}</td>
+          <td>${homeScorers[0] || ''}</td>
+          <td>${homeScorers[1] || ''}</td>
+          <td>${homeScorers[2] || ''}</td>
+          <td>${awayScorers[0] || ''}</td>
+          <td>${awayScorers[1] || ''}</td>
+          <td>${awayScorers[2] || ''}</td>`;
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      section.appendChild(table);
+      container.appendChild(section);
+    });
+  }).catch(error => {
+    console.error("Chyba při načítání tipů:", error);
   });
 }
+
 
 function updatePartialScorers(existing, updates) {
   const original = existing ? existing.split(',').map(s => s.trim()) : ['', '', ''];
