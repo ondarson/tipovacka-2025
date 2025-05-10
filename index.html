@@ -435,9 +435,10 @@ function renderTips(mode = 'upcoming') {
     const tipsByMatch = {};
 
     tips.forEach(tip => {
-      const matchTime = new Date(tip.datetime);
-      const archiveTime = new Date(matchTime.getTime() + 24 * 60 * 60 * 1000);
+      const matchDate = new Date(tip.datetime);
+      const archiveTime = new Date(matchDate.getFullYear(), matchDate.getMonth(), matchDate.getDate() + 1);
       const isPast = now >= archiveTime;
+
 
       if ((mode === 'upcoming' && !isPast) || (mode === 'past' && isPast)) {
         if (!tipsByMatch[tip.match]) tipsByMatch[tip.match] = [];
