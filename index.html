@@ -447,10 +447,22 @@ function renderTips(mode = 'upcoming') {
     });
 
     const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
-      const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
-      const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
-      return new Date(aMatch?.datetime) - new Date(bMatch?.datetime);
+       const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
+       const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
+
+       if (!aMatch || !bMatch) return 0;
+
+       const aDate = aMatch.date;
+       const bDate = bMatch.date;
+
+       if (aDate !== bDate) {
+         return bDate.localeCompare(aDate); // SESTUPNĚ podle DATE
+       }
+
+      // Pokud stejné datum, řadit vzestupně podle času
+      return new Date(aMatch.datetime) - new Date(bMatch.datetime);
     });
+
 
     matchLabelsSorted.forEach(match => {
       const section = document.createElement('div');
