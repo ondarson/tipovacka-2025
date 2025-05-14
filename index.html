@@ -460,10 +460,8 @@ function renderTips(mode = 'upcoming') {
     return aDate.localeCompare(bDate);
   }
 
-  // sekundární řazení – sestupně podle času
-  const aTime = new Date(aMatch.datetime);
-  const bTime = new Date(bMatch.datetime);
-  return bTime - aTime;
+  // Pokud stejné datum, řadit vzestupně podle času
+  return new Date(aMatch.datetime) - new Date(bMatch.datetime);
 });
 
 
