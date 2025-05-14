@@ -455,9 +455,9 @@ function renderTips(mode = 'upcoming') {
        const aDate = aMatch.date;
        const bDate = bMatch.date;
 
-       if (aDate !== bDate) {
-         return bDate.localeCompare(aDate); // SESTUPNĚ podle DATE
-       }
+       return mode === 'past'
+         ? bDate - aDate  // Historie: nejnovější první
+         : aDate - bDate; // Nové tipy: nejbližší první
 
       // Pokud stejné datum, řadit vzestupně podle času
       return new Date(aMatch.datetime) - new Date(bMatch.datetime);
