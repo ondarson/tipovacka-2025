@@ -447,21 +447,25 @@ function renderTips(mode = 'upcoming') {
     });
 
     const matchLabelsSorted = Object.keys(tipsByMatch).sort((a, b) => {
-       const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
-       const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
+  const aMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === a);
+  const bMatch = schedule.find(m => `${m.teams[0]} vs ${m.teams[1]} (${m.date} ${m.time})` === b);
 
-       if (!aMatch || !bMatch) return 0;
+  if (!aMatch || !bMatch) return 0;
 
-       const aDate = aMatch.date;
-       const bDate = bMatch.date;
+  const aDate = aMatch.date;
+  const bDate = bMatch.date;
 
-       return mode === 'past'
-         : aDate - bDate  // Historie: nejnovější první
-         : aDate - bDate; // Nové tipy: nejbližší první
+  if (aDate !== bDate) {
+    // primární řazení – vzestupně podle dne
+    return aDate.localeCompare(bDate);
+  }
 
-      // Pokud stejné datum, řadit vzestupně podle času
-      return new Date(aMatch.datetime) - new Date(bMatch.datetime);
-    });
+  // sekundární řazení – sestupně podle času
+  const aTime = new Date(aMatch.datetime);
+  const bTime = new Date(bMatch.datetime);
+  return bTime - aTime;
+});
+
 
 
     matchLabelsSorted.forEach(match => {
