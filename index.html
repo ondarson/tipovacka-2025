@@ -456,7 +456,7 @@ function renderTips(mode = 'upcoming') {
        const bDate = bMatch.date;
 
        return mode === 'past'
-         ? bDate - aDate  // Historie: nejnovější první
+         : aDate - bDate  // Historie: nejnovější první
          : aDate - bDate; // Nové tipy: nejbližší první
 
       // Pokud stejné datum, řadit vzestupně podle času
