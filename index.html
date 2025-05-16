@@ -121,6 +121,13 @@
     }
 
    @media (max-width: 768px) {
+     .tips-table {
+    font-size: 0.75rem;
+    table-layout: fixed;
+    word-wrap: break-word;
+  }
+
+     
       h1 {
         font-size: 1.8rem;
         text-align: center;
@@ -201,8 +208,9 @@
     </div>
     </div>
 </div>
-<div id="rankingTable" style="display: none; margin-top: 10px; max-width: 1000px;">
-  <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
+<div id="rankingTable" style="display: none; margin-top: 10px; max-width: 1000px; overflow-x: auto;">
+  <div style="min-width: 700px;">
+    <table class="tips-table" style="width: 100%; font-size: 0.9rem;">
       <thead>
       <tr><th>Pořadí</th><th>Jméno</th><th>Body</th><th>15.5.</th><th>14.5.</th><th>13.5.</th><th>12.5.</th><th>11.5.</th><th>10.5.</th><th>9.5.</th></tr>
     </thead>
@@ -220,6 +228,7 @@
 <tr><td >11.</td><td>Venda</td><td>90</td><td></td><td></td><td></td><td>7</td><td>31</td><td>41</td><td>11</td></tr>
     </tbody>
   </table>
+ </div>
 </div>
 
 <div id="tipsContainer"></div>
